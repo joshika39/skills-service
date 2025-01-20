@@ -272,4 +272,37 @@ class OAuth2UserConverterService {
             )
         }
     }
+
+    static class CognitoConverter implements OAuth2UserConverter {
+        static final String NAME = 'name'
+        static final String EMAIL = 'email'
+        static final String USERNAME = 'username'
+
+        String providerId = 'cognito'
+
+        @Override
+        UserInfo convert(String providerId, OAuth2User oAuth2User) {
+            String username = oAuth2User.attributes.get(USERNAME)
+            assert username, "Error getting username attribute of oAuth2User [${oAuth2User}] from providerId [$providerId]"
+            String email = oAuth2User.attributes.get(EMAIL)
+            if (!email) {
+                throw new SkillsAuthorizationException("Email must be available in your public Cognito profile")
+            }
+            String name = oAuth2User.attributes.get(NAME)
+            if (!name) {
+                throw new SkillsAuthorizationException("Name must be available in your public Cognito profile")
+            }
+            String firstName = name?.tokenize()?.first()
+            List tokens = name?.tokenize()
+            tokens?.pop()
+            tokens?.remove(username)
+            String lastName = tokens?.join(' ')
+            return new UserInfo(
+                    username: "${username}-${providerId}",
+                    email: email,
+                    firstName: firstName,
+                    lastName: lastName,
+            )
+        }
+    }
 }
