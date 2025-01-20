@@ -34,7 +34,7 @@ class OAuth2UserConverterService {
     @Autowired
     UserAuthService userAuthService
 
-    @Resource(name='oauth2UserConverters')
+    @Resource(name = 'oauth2UserConverters')
     Map<String, OAuth2UserConverter> lookup = [:]
 
     UserInfo convert(String providerId, OAuth2User oAuth2User) {
@@ -53,6 +53,7 @@ class OAuth2UserConverterService {
 
     static interface OAuth2UserConverter {
         String getProviderId()
+
         UserInfo convert(String providerId, OAuth2User oAuth2User)
     }
 
@@ -67,7 +68,7 @@ class OAuth2UserConverterService {
         UserInfo convert(String providerId, OAuth2User oAuth2User) {
             String username = oAuth2User.getName()
             assert username, "Error getting name attribute of oAuth2User [${oAuth2User}] from providerId [$providerId]"
-            String email =  oAuth2User.attributes.get(EMAIL)
+            String email = oAuth2User.attributes.get(EMAIL)
             if (!email) {
                 throw new SkillsAuthorizationException("Email must be available in your public Github profile")
             }
@@ -83,7 +84,7 @@ class OAuth2UserConverterService {
             return new UserInfo(
                     username: "${username}-${providerId}",
                     usernameForDisplay: login,
-                    email:email,
+                    email: email,
                     firstName: firstName,
                     lastName: lastName,
             )
@@ -101,16 +102,16 @@ class OAuth2UserConverterService {
         UserInfo convert(String providerId, OAuth2User oAuth2User) {
             String username = oAuth2User.getName()
             assert username, "Error getting name attribute of oAuth2User [${oAuth2User}] from providerId [$providerId]"
-            String firstName =  oAuth2User.attributes.get(FIRST_NAME)
-            String lastName =  oAuth2User.attributes.get(LAST_NAME)
-            String email =  oAuth2User.attributes.get(EMAIL)
+            String firstName = oAuth2User.attributes.get(FIRST_NAME)
+            String lastName = oAuth2User.attributes.get(LAST_NAME)
+            String email = oAuth2User.attributes.get(EMAIL)
             String usernameForDisplay = StringUtils.substringBeforeLast(email, '@')
             assert firstName && lastName && email, "First Name [$firstName], Last Name [$lastName], and email [$email] must be available in your public Google profile"
 
             return new UserInfo(
                     username: "${username}-${providerId}",
                     usernameForDisplay: usernameForDisplay,
-                    email:email,
+                    email: email,
                     firstName: firstName,
                     lastName: lastName,
             )
@@ -127,7 +128,7 @@ class OAuth2UserConverterService {
         UserInfo convert(String providerId, OAuth2User oAuth2User) {
             String username = oAuth2User.getName()
             assert username, "Error getting name attribute of oAuth2User [${oAuth2User}] from providerId [$providerId]"
-            String email =  oAuth2User.attributes.get(EMAIL)
+            String email = oAuth2User.attributes.get(EMAIL)
             if (!email) {
                 throw new SkillsAuthorizationException("Email must be available in your public GitLab profile")
             }
@@ -147,7 +148,7 @@ class OAuth2UserConverterService {
 
             return new UserInfo(
                     username: "${username}-${providerId}",
-                    email:email,
+                    email: email,
                     firstName: firstName,
                     lastName: lastName,
             )
@@ -165,7 +166,7 @@ class OAuth2UserConverterService {
         UserInfo convert(String providerId, OAuth2User oAuth2User) {
             String username = oAuth2User.attributes.get(USERNAME)
             assert username, "Error getting name attribute of oAuth2User [${oAuth2User}] from providerId [$providerId]"
-            String email =  oAuth2User.attributes.get(EMAIL)
+            String email = oAuth2User.attributes.get(EMAIL)
             if (!email) {
                 throw new SkillsAuthorizationException("Email must be available in your public profile")
             }
@@ -181,7 +182,7 @@ class OAuth2UserConverterService {
 
             return new UserInfo(
                     username: "${username}-${providerId}",
-                    email:email,
+                    email: email,
                     firstName: firstName,
                     lastName: lastName,
             )
@@ -190,6 +191,7 @@ class OAuth2UserConverterService {
 
     static class HydraUserConverter implements OAuth2UserConverter {
         String providerId = 'hydra'
+
         @Override
         UserInfo convert(String providerId, OAuth2User oAuth2User) {
             String email = oAuth2User.getName()
@@ -204,7 +206,7 @@ class OAuth2UserConverterService {
 
             return new UserInfo(
                     username: "${username}-${providerId}",
-                    email:email,
+                    email: email,
                     firstName: firstName,
                     lastName: lastName,
             )
@@ -225,9 +227,9 @@ class OAuth2UserConverterService {
             String username = oAuth2User.getName()
             assert username, "Error getting name attribute of oAuth2User [${oAuth2User}] from providerId [$providerId]"
 
-            String firstName =  oAuth2User.attributes.get(FIRST_NAME)
-            String lastName =  oAuth2User.attributes.get(LAST_NAME)
-            String email =  oAuth2User.attributes.get(EMAIL)
+            String firstName = oAuth2User.attributes.get(FIRST_NAME)
+            String lastName = oAuth2User.attributes.get(LAST_NAME)
+            String email = oAuth2User.attributes.get(EMAIL)
             if (!(firstName && lastName && email)) {
                 throw new SkillsAuthorizationException("First Name [$firstName], Last Name [$lastName], and email [$email] must be configured in Keycloak")
             }
@@ -248,11 +250,12 @@ class OAuth2UserConverterService {
         static final String EMAIL = 'email'
 
         String providerId = 'azure'
+
         @Override
         UserInfo convert(String providerId, OAuth2User oAuth2User) {
-            String firstName =  oAuth2User.attributes.get(FIRST_NAME)
-            String lastName =  oAuth2User.attributes.get(LAST_NAME)
-            String email =  oAuth2User.attributes.get(EMAIL)
+            String firstName = oAuth2User.attributes.get(FIRST_NAME)
+            String lastName = oAuth2User.attributes.get(LAST_NAME)
+            String email = oAuth2User.attributes.get(EMAIL)
             List tokens = email.tokenize('@')
             String username = tokens.first()
 
@@ -263,7 +266,7 @@ class OAuth2UserConverterService {
 
             return new UserInfo(
                     username: "${username}-${providerId}",
-                    email:email,
+                    email: email,
                     firstName: firstName,
                     lastName: lastName,
             )
